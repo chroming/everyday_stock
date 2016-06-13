@@ -17,7 +17,7 @@ cursor = db.cursor()
 
 #cursor.execute("DROP TABLE %s IF EXISTS %s;" % (today, today))
 
-cursor.execute("DROP TABLE %s;" % today)
+#cursor.execute("DROP TABLE %s;" % today)
 
 
 
@@ -25,7 +25,11 @@ sql = "CREATE TABLE %s (sn CHAR(20) ,股票名字  CHAR(50),今日开盘价  FLO
 
 #sql = "CREATE TABLE %s (gp  CHAR(20),jz  FLOAT);" % today
 
-cursor.execute(sql)
+try:
+    cursor.execute(sql)
+except:
+    cursor.execute("DROP TABLE %s;" % today)
+    cursor.execute(sql)
 #idn = 0
 
 def check_stock(sn):
