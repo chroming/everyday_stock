@@ -7,15 +7,8 @@ import time
 
 #today = datetime.date.today().strftime("%Y_%m_%d")
 
-try:
-    db = MySQLdb.connect("localhost", "root", "", "stockdb", charset="utf8")
-except:
-    print u"数据库stockdb无法连接!请检查后重试!"
-    exit()
-cursor = db.cursor()
 
-today = 'stocktable'
-td = datetime.date.today().strftime("%Y-%m-%d")
+
 #stock_response = requests.get('http://hq.sinajs.cn/list=sh600000', timeout=10).text[]
 
 
@@ -48,11 +41,14 @@ def check_list(check_sn):
 
 def check_stock(sn):
     if check_list(sn):
+    #if True:
         try:
-            stock_response = requests.get('http://hq.sinajs.cn/list=%s' % sn, timeout=30)
-        except:
-            print u"网络超时！7s后重试"
-            time.sleep(7)
+            stock_response = requests.get('http://hq.sinajs.cn/list=%s' % sn, timeout=float(timeout))
+        except BaseException, e:
+            print e
+            print u"网络超时！2s后重试"
+            print u"sn: " + sn
+            time.sleep(float(sleeptime))
             return check_stock(sn)
         if stock_response:
             stock_text = stock_response.text
@@ -87,17 +83,39 @@ def check_stock(sn):
                 else:
                     return None
 
-# 上证
-for shi in range(600000, 604000):
-    shi = 'sh' + str(shi)
-    check_stock(shi)
+if __name__ == '__main__':
+    tm = time.strftime("%H", time.localtime())
+    if 16 < tm < 24:
+        try:
+            db = MySQLdb.connect("localhost", "root", "", "stockdb", charset="utf8")
+        except:
+            print u"数据库stockdb无法连接!请检查后重试!"
+            exit()
+        cursor = db.cursor()
 
-# 深证1
-for szi in range(0, 2801):
-    szi = 'sz' + str(szi).zfill(6)
-    check_stock(szi)
+        today = 'stocktable'
+        td = datetime.date.today().strftime("%Y-%m-%d")
 
-# 深证2
-for szj in range(300000, 3000517):
-    szi = 'sz' + str(szj).zfill(6)
-    check_stock(szi)
+        timeout = raw_input("请输入timeout值： ")
+        sleeptime = raw_input("请输入sleeptime的值：")
+
+        # 上证
+        for shi in range(600000, 604000):
+            shi = 'sh' + str(shi)
+            check_stock(shi)
+
+        # 深证1
+        for szi in range(0, 2801):
+            szi = 'sz' + str(szi).zfill(6)
+            check_stock(szi)
+
+        # 深证2
+        for szj in range(300000, 300517):
+            szi = 'sz' + str(szj).zfill(6)
+            check_stock(szi)
+
+
+
+
+
+

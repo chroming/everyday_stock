@@ -1,0 +1,7 @@
+*.toc
+build/everyday_stock/everyday_stock.exe.manifest
+*.pyz
+build/everyday_stock/out00-PKG.pkg
+*.txt
+dist/everyday_stock.exe
+*.spec
